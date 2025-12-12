@@ -3,43 +3,30 @@ import Tracking from "../models/Tracking";
 
 export const trackEvent = async (req: Request, res: Response) => {
   try {
-    const { component, variant, action, metadata } = req.body;
+    const event = new Tracking(req.body);
+    await event.save();
 
-    if (!component || !action) {
-      return res.status(400).json({
-        error: "component and action are required",
-      });
-    }
-
-    const entry = await Tracking.create({
-      component,
-      variant,
-      action,
-      metadata,
-    });
-
-    return res.json({
-      message: "Event tracked",
-      entry,
-    });
-  } catch (error) {
-    return res.status(500).json({ error: "Server error" });
+    res.json({ message: "Event tracked", event });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to track event" });
   }
 };
 
 export const getStats = async (_req: Request, res: Response) => {
   try {
-    const totalEvents = await Tracking.countDocuments();
+    
+    const events = await Tracking.find().sort({ timestamp: 1 });
 
     const eventsByComponent = await Tracking.aggregate([
-      { $group: { _id: "$component", count: { $sum: 1 } } },
+      { $group: { _id: "$component", count: { $sum: 1 } } }
     ]);
 
-    return res.json({
-      totalEvents,
+    res.json({
+      totalEvents: events.length,
       eventsByComponent,
+      events, 
     });
-  } catch (error) {
-    return res.status(500).json({ error: "Server error" });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to load stats" });
   }
 };
