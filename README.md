@@ -54,7 +54,7 @@ tracking de componentes, estadísticas y exportación de datos.
 ### 1. Clonar repositorio
 
     git clone https://github.com/MarcosSeis/component-library-backend.git
-    cd backend
+   
 
 ### 2. Instalar dependencias
 
