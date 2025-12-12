@@ -1,20 +1,13 @@
-import mongoose, { Schema, Document } from "mongoose";
+import mongoose from "mongoose";
 
-export interface ITracking extends Document {
-  component: string;
-  action: string;
-  variant?: string;
-  timestamp: number;
-}
-
-const TrackingSchema = new Schema<ITracking>(
+const trackingSchema = new mongoose.Schema(
   {
     component: { type: String, required: true },
+    variant: { type: String, required: false },
     action: { type: String, required: true },
-    variant: { type: String },
-    timestamp: { type: Number, required: true }
+    metadata: { type: Object, default: {} },
   },
   { timestamps: true }
 );
 
-export default mongoose.model<ITracking>("Tracking", TrackingSchema);
+export default mongoose.model("Tracking", trackingSchema);
